@@ -1,0 +1,42 @@
+#include <iostream>
+#include <iomanip>
+#include <climits>
+using namespace std;
+
+int main() {
+    long long journeys[] = {
+        20000, 500000, 3000000
+    };
+
+    long long fare = 3000;
+
+    cout << fixed << setprecision(2);
+
+    cout << "Fare per journey: Rs 30.00\n\n";
+
+    for (long long n : journeys) {
+        long long totalPaise = n * fare;
+
+        double totalDouble = n * 30.0;
+
+        cout << "Journeys: " << n << '\n';
+
+        cout << "Integer Total: "
+             << totalPaise << " paise\n";
+
+        cout << "Double Total: Rs "
+             << totalDouble << '\n';
+
+        cout << "Collection: Rs "
+             << totalPaise / 100.0 << "\n\n";
+    }
+
+    cout << "INT Maximum: " << INT_MAX << '\n';
+
+    cout << "3 Million Journey Total: "
+         << journeys[2] * fare << " paise\n";
+
+    cout << "long long is suitable for this total.\n";
+
+    return 0;
+}
