@@ -1,0 +1,40 @@
+#include <iostream>
+using namespace std;
+
+class SmartCard {
+private:
+    long long balance;
+    static constexpr long long MIN_BALANCE = 5000;
+
+public:
+    SmartCard(long long b) {
+        balance = b;
+    }
+
+    bool canTravel(long long fare) const {
+        return fare > 0 &&
+               balance - fare >= MIN_BALANCE;
+    }
+
+    void deduct(long long fare) {
+        if (canTravel(fare)) {
+            balance -= fare;
+            cout << "Journey Allowed\n";
+        } else {
+            cout << "Journey Denied\n";
+        }
+    }
+
+    void display() const {
+        cout << "Balance: " << balance << " paise\n";
+    }
+};
+
+int main() {
+    SmartCard card(10000);
+
+    card.deduct(2000);
+    card.display();
+
+    return 0;
+}
