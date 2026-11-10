@@ -1,0 +1,83 @@
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+enum class Zone {
+    Inner, Middle, Outer
+};
+
+constexpr long long FARE[] = {
+    1000, 2000, 3000
+};
+
+constexpr int PEAK_PERCENT = 20;
+
+constexpr long long MIN_BALANCE = 5000;
+
+class FareTable {
+public:
+    long long calculate(Zone z, bool peak) const {
+        int index = static_cast<int>(z);
+
+        if (index < 0 || index >= 3)
+            return -1;
+
+        long long fare = FARE[index];
+
+        if (peak) {
+            fare += fare * PEAK_PERCENT / 100;
+        }
+
+        return fare;
+    }
+};
+
+class SmartCard {
+private:
+    long long balance;
+
+public:
+    SmartCard(long long b) : balance(b) {}
+
+    bool canTravel(long long fare) const {
+        return fare >= 0 &&
+               balance >= fare &&
+               balance - fare >= MIN_BALANCE;
+    }
+
+    void travel(long long fare) {
+        if (canTravel(fare)) {
+            balance -= fare;
+            cout << "Journey Allowed\n";
+        } else {
+            cout << "Journey Denied\n";
+        }
+    }
+
+    void display() const {
+        cout << "Balance: Rs "
+             << balance / 100 << "."
+             << setw(2) << setfill('0')
+             << balance % 100 << setfill(' ') << '\n';
+    }
+};
+
+int main() {
+    FareTable table;
+
+    SmartCard card(10000);
+
+    long long f1 = table.calculate(Zone::Inner, false);
+
+    cout << "Inner Fare: Rs " << f1 / 100.0 << '\n';
+    card.travel(f1);
+    card.display();
+
+    long long f2 = table.calculate(Zone::Outer, true);
+
+    cout << "Outer Fare: Rs " << f2 / 100.0 << '\n';
+    card.travel(f2);
+    card.display();
+
+    return 0;
+}
