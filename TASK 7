@@ -1,0 +1,28 @@
+#include <iostream>
+using namespace std;
+
+long long balance = 10000;
+
+const long long MIN_BALANCE = 5000;
+
+bool canTravel(long long fare) {
+    return fare > 0 &&
+           balance - fare >= MIN_BALANCE;
+}
+
+void deductFare(long long fare) {
+    if (canTravel(fare)) {
+        balance -= fare;
+        cout << "Journey Allowed\n";
+    } else {
+        cout << "Journey Denied\n";
+    }
+}
+
+int main() {
+    deductFare(2000);
+
+    cout << "Balance: " << balance << " paise\n";
+
+    return 0;
+}
