@@ -1,0 +1,76 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class SmartCard {
+public:
+    long long balance;
+
+    SmartCard(long long b) {
+        balance = b;
+    }
+
+    void display() {
+        cout << "Card Balance: Rs " << balance / 100.0 << '\n';
+    }
+};
+
+class Passenger {
+public:
+    string name;
+    string type;
+
+    Passenger(string n, string t) {
+        name = n;
+        type = t;
+    }
+
+    void display() {
+        cout << "Passenger: " << name << '\n';
+        cout << "Type: " << type << '\n';
+    }
+};
+
+class Journey {
+public:
+    int zone;
+    int hour;
+
+    Journey(int z, int h) {
+        zone = z;
+        hour = h;
+    }
+
+    void display() {
+        cout << "Zone: " << zone << '\n';
+        cout << "Hour: " << hour << '\n';
+    }
+};
+
+class FareTable {
+public:
+    long long calculate(int zone) {
+        switch (zone) {
+            case 1: return 1000;
+            case 2: return 2000;
+            case 3: return 3000;
+            default: return 0;
+        }
+    }
+};
+
+int main() {
+    Passenger p("Yugandhar", "Student");
+    SmartCard card(10000);
+    Journey j(2, 9);
+    FareTable f;
+
+    p.display();
+    j.display();
+
+    cout << "Fare: Rs " << f.calculate(j.zone) / 100.0 << '\n';
+
+    card.display();
+
+    return 0;
+}
