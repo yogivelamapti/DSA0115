@@ -1,0 +1,146 @@
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+enum class Zone {
+    Inner, Middle, Outer, Airport
+};
+
+constexpr long long FARES[] = {
+    1000, 2000, 3000, 6000
+};
+
+constexpr long long MIN_BALANCE = 5000;
+
+class Pass {
+private:
+    Zone zone1, zone2;
+    bool active;
+
+public:
+    Pass(Zone z1, Zone z2) {
+        zone1 = z1;
+        zone2 = z2;
+        active = true;
+    }
+
+    bool isValid(Zone z) const {
+        return active &&
+               (z == zone1 || z == zone2);
+    }
+};
+
+class SmartCard {
+private:
+    long long balance;
+
+public:
+    SmartCard(long long b) {
+        balance = b;
+    }
+
+    bool canTravel(long long fare) const {
+        return fare >= 0 &&
+               balance >= fare &&
+               balance - fare >= MIN_BALANCE;
+    }
+
+    void deduct(long long fare) {
+        balance -= fare;
+    }
+
+    void display() const {
+        cout << "Balance: Rs "
+             << balance / 100 << "."
+             << setw(2) << setfill('0')
+             << balance % 100 << setfill(' ') << '\n';
+    }
+};
+
+long long calculateFare(
+    Zone z, bool peak, bool weekend
+) {
+    int index = static_cast<int>(z);
+
+    if (index < 0 || index >= 4)
+        return -1;
+
+    long long fare = FARES[index];
+
+    if (weekend) {
+        fare = fare * 90 / 100;
+    }
+    else if (peak) {
+        fare = fare * 120 / 100;
+    }
+
+    return fare;
+}
+
+void processJourney(
+    SmartCard& card,
+    const Pass& pass,
+    Zone zone,
+    bool peak,
+    bool weekend
+) {
+    if (pass.isValid(zone)) {
+        cout << "Monthly Pass: Journey Allowed\n";
+        card.display();
+        return;
+    }
+
+    long long fare = calculateFare(zone, peak, weekend);
+
+    if (fare < 0) {
+        cout << "Invalid Zone\n";
+        return;
+    }
+
+    if (card.canTravel(fare)) {
+        card.deduct(fare);
+
+        cout << "Fare: Rs "
+             << fare / 100 << "."
+             << setw(2) << setfill('0')
+             << fare % 100 << setfill(' ') << '\n';
+
+        cout << "Journey Allowed\n";
+    }
+    else {
+        cout << "Journey Denied: Low Balance\n";
+    }
+
+    card.display();
+}
+
+int main() {
+    SmartCard card(20000);
+
+    Pass monthlyPass(
+        Zone::Inner,
+        Zone::Middle
+    );
+
+    processJourney(
+        card, monthlyPass,
+        Zone::Inner, true, false
+    );
+
+    processJourney(
+        card, monthlyPass,
+        Zone::Outer, false, true
+    );
+
+    processJourney(
+        card, monthlyPass,
+        Zone::Airport, true, false
+    );
+
+    processJourney(
+        card, monthlyPass,
+        Zone::Airport, true, true
+    );
+
+    return 0;
+}
