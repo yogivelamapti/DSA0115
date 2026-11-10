@@ -1,0 +1,38 @@
+#include <iostream>
+#include <climits>
+using namespace std;
+
+int main() {
+    int hour = 9;
+    long long fare = 2400;
+    long long balance = 10000;
+    bool peak = true;
+    char zone = 'M';
+    double amount = 24.50;
+
+    cout << "Hour: " << hour << '\n';
+    cout << "Fare in Paise: " << fare << '\n';
+    cout << "Balance in Paise: " << balance << '\n';
+    cout << "Peak: " << boolalpha << peak << '\n';
+    cout << "Zone: " << zone << '\n';
+    cout << "Amount: " << amount << '\n';
+
+    cout << "\nData Type Sizes\n";
+
+    cout << "int: " << sizeof(int) << " bytes\n";
+    cout << "long long: " << sizeof(long long) << " bytes\n";
+    cout << "double: " << sizeof(double) << " bytes\n";
+    cout << "float: " << sizeof(float) << " bytes\n";
+    cout << "bool: " << sizeof(bool) << " bytes\n";
+    cout << "char: " << sizeof(char) << " bytes\n";
+
+    cout << "\nInteger Limits\n";
+    cout << "INT_MAX: " << INT_MAX << '\n';
+    cout << "LLONG_MAX: " << LLONG_MAX << '\n';
+
+    long long total = 3000000LL * 3000;
+
+    cout << "Network Total: " << total << " paise\n";
+
+    return 0;
+}
