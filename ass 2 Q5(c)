@@ -1,0 +1,57 @@
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+class BusTicket {
+    static int issued;
+    static const int CAPACITY = 5;
+
+    int seat;
+    string name;
+
+public:
+    BusTicket(string n) {
+        name = n;
+        seat = 0;
+
+        if (issued < CAPACITY) {
+            seat = ++issued;
+        }
+    }
+
+    static int count() {
+        return issued;
+    }
+
+    void print() const {
+        cout << name << ": ";
+
+        if (seat)
+            cout << "Seat " << seat << endl;
+        else
+            cout << "Waiting" << endl;
+    }
+};
+
+int BusTicket::issued = 0;
+
+void createTickets() {
+    BusTicket a("Ravi");
+    BusTicket b("Kiran");
+
+    a.print();
+    b.print();
+
+    cout << "Total Issued: " << BusTicket::count() << endl;
+}
+
+int main() {
+    cout << "First Function Call:" << endl;
+    createTickets();
+
+    cout << "\nSecond Function Call:" << endl;
+    createTickets();
+
+    return 0;
+}
