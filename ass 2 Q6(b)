@@ -1,0 +1,44 @@
+
+#include <iostream>
+using namespace std;
+
+class Time {
+    int h, m;
+
+public:
+    Time(int hh, int mm) : h(hh), m(mm) {}
+
+    friend int minutesBetween(const Time&, const Time&);
+    friend bool earlier(const Time&, const Time&);
+};
+
+int minutesBetween(const Time& a, const Time& b) {
+    int t1 = a.h * 60 + a.m;
+    int t2 = b.h * 60 + b.m;
+
+    int diff = t1 - t2;
+
+    return diff < 0 ? -diff : diff;
+}
+
+bool earlier(const Time& a, const Time& b) {
+    return a.h * 60 + a.m < b.h * 60 + b.m;
+}
+
+int main() {
+    Time t1(11, 30);
+    Time t2(11, 30);
+
+    cout << "Same Time: "
+         << minutesBetween(t1, t2) << " "
+         << earlier(t1, t2) << endl;
+
+    Time t3(11, 50);
+    Time t4(12, 10);
+
+    cout << "Before and After Noon: "
+         << minutesBetween(t3, t4) << " "
+         << earlier(t3, t4) << endl;
+
+    return 0;
+}
