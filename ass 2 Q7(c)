@@ -1,0 +1,50 @@
+
+#include <iostream>
+#include <chrono>
+#include <string>
+using namespace std;
+using namespace chrono;
+
+const int N = 100000;
+
+int main() {
+    string a[10];
+    string b[10];
+
+    int next = 0;
+    int count = 0;
+
+    auto start = high_resolution_clock::now();
+
+    for (int i = 0; i < N; i++) {
+        if (count == 10) {
+            for (int j = 1; j < 10; j++) {
+                a[j - 1] = a[j];
+            }
+            count--;
+        }
+
+        a[count++] = to_string(i);
+    }
+
+    auto end = high_resolution_clock::now();
+
+    cout << "Array Shifting Time: "
+         << duration_cast<milliseconds>(end - start).count()
+         << " ms" << endl;
+
+    start = high_resolution_clock::now();
+
+    for (int i = 0; i < N; i++) {
+        b[next] = to_string(i);
+        next = (next + 1) % 10;
+    }
+
+    end = high_resolution_clock::now();
+
+    cout << "Circular Buffer Time: "
+         << duration_cast<milliseconds>(end - start).count()
+         << " ms" << endl;
+
+    return 0;
+}
