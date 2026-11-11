@@ -1,0 +1,61 @@
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+class TicketOffice {
+    int issued = 0;
+    int capacity;
+
+public:
+    TicketOffice(int c) {
+        capacity = c;
+    }
+
+    int getSeat() {
+        if (issued < capacity)
+            return ++issued;
+
+        return 0;
+    }
+
+    int count() const {
+        return issued;
+    }
+};
+
+class BusTicket {
+    int seat;
+    string name;
+
+public:
+    BusTicket(string n, TicketOffice& office) {
+        name = n;
+        seat = office.getSeat();
+    }
+
+    void print() const {
+        cout << name << ": ";
+
+        if (seat)
+            cout << "Seat " << seat << endl;
+        else
+            cout << "Waiting" << endl;
+    }
+};
+
+int main() {
+    TicketOffice office(2);
+
+    BusTicket a("Asha", office);
+    BusTicket b("Bala", office);
+    BusTicket c("Dev", office);
+
+    a.print();
+    b.print();
+    c.print();
+
+    cout << "Issued: " << office.count() << endl;
+
+    return 0;
+}
