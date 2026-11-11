@@ -1,0 +1,29 @@
+
+#include <iostream>
+using namespace std;
+
+int highestIndex(int marks[], int n) {
+    int index = 0;
+
+    for (int i = 1; i < n; i++) {
+        if (marks[i] > marks[index]) {
+            index = i;
+        }
+    }
+
+    return index;
+}
+
+int main() {
+    int marks[5] = {75, 85, 90, 80, 70};
+
+    int index = highestIndex(marks, 5);
+
+    cout << "Highest Mark: " << marks[index] << endl;
+
+    marks[index] += 2;
+
+    cout << "After Moderation: " << marks[index] << endl;
+
+    return 0;
+}
