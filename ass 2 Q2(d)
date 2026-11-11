@@ -1,0 +1,29 @@
+
+#include <iostream>
+using namespace std;
+
+int* highestPointer(int marks[], int n) {
+    int* p = &marks[0];
+
+    for (int i = 1; i < n; i++) {
+        if (marks[i] > *p) {
+            p = &marks[i];
+        }
+    }
+
+    return p;
+}
+
+int main() {
+    int marks[5] = {75, 85, 90, 80, 70};
+
+    cout << "Highest Mark: "
+         << *highestPointer(marks, 5) << endl;
+
+    *highestPointer(marks, 5) += 2;
+
+    cout << "After Moderation: "
+         << *highestPointer(marks, 5) << endl;
+
+    return 0;
+}
