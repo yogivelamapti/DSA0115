@@ -1,0 +1,34 @@
+
+#include <iostream>
+using namespace std;
+
+struct Parcel {
+    double weight;
+    bool express = false;
+    bool insured = false;
+};
+
+double calculateCharge(const Parcel& p) {
+    double amount = p.weight * 100;
+
+    if (p.express)
+        amount += 50;
+
+    if (p.insured)
+        amount += 30;
+
+    return amount;
+}
+
+int main() {
+    Parcel p1 = {2.0, true, false};
+    Parcel p2 = {3.0, false, true};
+
+    cout << "Parcel 1 Charge: "
+         << calculateCharge(p1) << endl;
+
+    cout << "Parcel 2 Charge: "
+         << calculateCharge(p2) << endl;
+
+    return 0;
+}
