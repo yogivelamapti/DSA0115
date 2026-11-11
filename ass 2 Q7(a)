@@ -1,0 +1,58 @@
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+class SavingsAccount {
+private:
+    int accountNumber;
+    double balance;
+    string transactions[10];
+    int count;
+
+    void addTransaction(string message) {
+        if (count == 10) {
+            for (int i = 1; i < 10; i++) {
+                transactions[i - 1] = transactions[i];
+            }
+            count--;
+        }
+
+        transactions[count++] = message;
+    }
+
+public:
+    SavingsAccount(int acc, double bal) {
+        accountNumber = acc;
+        balance = bal;
+        count = 0;
+    }
+
+    void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            addTransaction("Deposit: " + to_string(amount));
+        }
+    }
+
+    void miniStatement() {
+        cout << "Account Number: " << accountNumber << endl;
+        cout << "Balance: " << balance << endl;
+
+        for (int i = 0; i < count; i++) {
+            cout << transactions[i] << endl;
+        }
+    }
+};
+
+int main() {
+    SavingsAccount account(101, 5000);
+
+    for (int i = 1; i <= 12; i++) {
+        account.deposit(100 * i);
+    }
+
+    account.miniStatement();
+
+    return 0;
+}
