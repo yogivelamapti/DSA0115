@@ -1,0 +1,38 @@
+
+#include <iostream>
+using namespace std;
+
+class Time {
+    int h, m;
+
+public:
+    Time(int hh, int mm) {
+        h = hh;
+        m = mm;
+    }
+
+    int minutesTo(const Time& b) const {
+        int t1 = h * 60 + m;
+        int t2 = b.h * 60 + b.m;
+
+        int diff = t1 - t2;
+
+        return diff < 0 ? -diff : diff;
+    }
+
+    bool isEarlier(const Time& b) const {
+        return h * 60 + m < b.h * 60 + b.m;
+    }
+};
+
+int main() {
+    Time departure(9, 45);
+    Time arrival(13, 10);
+
+    cout << departure.minutesTo(arrival) << endl;
+
+    cout << boolalpha
+         << arrival.isEarlier(departure) << endl;
+
+    return 0;
+}
