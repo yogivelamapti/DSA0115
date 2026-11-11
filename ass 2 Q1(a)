@@ -1,0 +1,37 @@
+
+#include <iostream>
+using namespace std;
+
+// Call by Value
+void byValue(int fee) {
+    fee = fee - fee * 10 / 100;
+    cout << "Call by Value: " << fee << endl;
+}
+
+// Call by Reference
+void byReference(int& fee) {
+    fee = fee - fee * 10 / 100;
+    cout << "Call by Reference: " << fee << endl;
+}
+
+// Call by Pointer
+void byPointer(int* fee) {
+    *fee = *fee - *fee * 10 / 100;
+    cout << "Call by Pointer: " << *fee << endl;
+}
+
+int main() {
+    int a = 45000;
+    int b = 45000;
+    int c = 45000;
+
+    byValue(a);
+    byReference(b);
+    byPointer(&c);
+
+    cout << "Original Value: " << a << endl;
+    cout << "Original Reference: " << b << endl;
+    cout << "Original Pointer: " << c << endl;
+
+    return 0;
+}
