@@ -1,0 +1,45 @@
+
+#include <iostream>
+using namespace std;
+
+struct Parcel {
+    double weight;
+};
+
+// Weight in grams
+void charge(int grams) {
+    cout << "Grams: " << grams
+         << " Charge: " << grams * 0.05 << endl;
+}
+
+// Weight in kilograms
+void charge(double kg, bool express = false,
+            bool insured = false) {
+    double amount = kg * 100;
+
+    if (express)
+        amount += 50;
+
+    if (insured)
+        amount += 30;
+
+    cout << "Kilograms: " << kg
+         << " Charge: " << amount << endl;
+}
+
+// Parcel object
+void charge(Parcel p) {
+    cout << "Parcel Charge: "
+         << p.weight * 100 << endl;
+}
+
+int main() {
+    charge(2);
+    charge(2.0);
+    charge(2.0f);
+    charge(500);
+    charge(3.0, true);
+    charge(Parcel{4.0});
+
+    return 0;
+}
