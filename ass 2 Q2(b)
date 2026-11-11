@@ -1,0 +1,17 @@
+
+#include <iostream>
+using namespace std;
+
+int& badFunction() {
+    int x = 100;
+    return x;
+}
+
+int main() {
+    cout << "This function returns a dangling reference." << endl;
+
+    // Do not call badFunction() or use its returned reference.
+    // Its behaviour is undefined.
+
+    return 0;
+}
