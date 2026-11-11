@@ -1,0 +1,17 @@
+
+#include <iostream>
+using namespace std;
+
+long long applyConcession(long long fee, int percent) {
+    return fee - fee * percent / 100;
+}
+
+int main() {
+    long long hostelFee = 45000;
+
+    hostelFee = applyConcession(hostelFee, 10);
+
+    cout << "Updated Hostel Fee: " << hostelFee << endl;
+
+    return 0;
+}
