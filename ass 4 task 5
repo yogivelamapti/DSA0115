@@ -1,0 +1,104 @@
+
+#include <iostream>
+#include <iomanip>
+#include <string>
+using namespace std;
+
+class Cart {
+private:
+    string items[10];
+    double prices[10];
+    int n = 0;
+    double discount = 0;
+
+public:
+    Cart(double t = 0) {
+        if (t > 0) {
+            items[n] = "Initial";
+            prices[n] = t;
+            n++;
+        }
+    }
+
+    Cart& add(const string& item, double price) {
+        if (n < 10 && price >= 0) {
+            items[n] = item;
+            prices[n] = price;
+            n++;
+        }
+        return *this;
+    }
+
+    Cart& setDiscount(double discount) {
+        if (discount >= 0 && discount <= 100) {
+            this->discount = discount;
+        }
+        return *this;
+    }
+
+    double total() const {
+        double t = 0;
+
+        for (int i = 0; i < n; i++) {
+            t += prices[i];
+        }
+
+        return t * (100 - discount) / 100;
+    }
+
+    void display() const {
+        cout << "Total: " << total() << endl;
+    }
+};
+
+int main() {
+    Cart c1(100);
+
+    cout << "Direct Object: ";
+    c1.display();
+
+    Cart* p = &c1;
+    cout << "Pointer: ";
+    p->display();
+
+    Cart& r = c1;
+    cout << "Reference: ";
+    r.display();
+
+    Cart* p2 = new Cart(200);
+    cout << "Dynamic Object: ";
+    p2->display();
+    delete p2;
+
+    c1.add("Book", 50).add("Pen", 25);
+    cout << "After Chaining: ";
+    c1.display();
+
+    Cart c2(500), c3(800), c4(650);
+    Cart* carts[] = {&c2, &c3, &c4};
+
+    Cart* highest = carts[0];
+
+    for (int i = 1; i < 3; i++) {
+        if (carts[i]->total() > highest->total()) {
+            highest = carts[i];
+        }
+    }
+
+    cout << "Highest Cart Total: "
+         << highest->total() << endl;
+
+    Cart c;
+    c.add("Rice", 60)
+     .add("Dal", 120)
+     .setDiscount(10);
+
+    Cart* ptr = &c;
+    ptr->add("Oil", 180);
+
+    cout << fixed << setprecision(2);
+    cout << "Final Discounted Total: "
+         << ptr->total() << endl;
+
+    return 0;
+}
