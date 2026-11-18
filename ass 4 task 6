@@ -1,0 +1,194 @@
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Vehicle {
+protected:
+    string registrationNo;
+    double dailyRate;
+    bool rented = false;
+
+public:
+    Vehicle(string reg, double rate)
+        : registrationNo(reg), dailyRate(rate) {}
+
+    virtual double rentalCharge(int days) const = 0;
+    virtual string type() const = 0;
+
+    bool rent() {
+        if (rented) {
+            return false;
+        }
+
+        rented = true;
+        return true;
+    }
+
+    double returnVehicle(int lateDays) {
+        if (!rented) {
+            return -1;
+        }
+
+        rented = false;
+        return lateDays * 200.0;
+    }
+
+    virtual void display() const {
+        cout << type() << " - " << registrationNo
+             << " - Rs." << dailyRate << endl;
+    }
+
+    virtual ~Vehicle() = default;
+};
+
+class Bicycle : public Vehicle {
+public:
+    Bicycle(string r, double rate) : Vehicle(r, rate) {}
+
+    double rentalCharge(int days) const override {
+        return dailyRate * days;
+    }
+
+    string type() const override {
+        return "Bicycle";
+    }
+};
+
+class MotorVehicle : public Vehicle {
+protected:
+    double energyLevel;
+    string serviceDueDate;
+
+public:
+    MotorVehicle(string r, double rate,
+                 double energy, string date)
+        : Vehicle(r, rate),
+          energyLevel(energy),
+          serviceDueDate(date) {}
+};
+
+class TwoWheeler : public MotorVehicle {
+public:
+    TwoWheeler(string r, double rate,
+               double energy, string date)
+        : MotorVehicle(r, rate, energy, date) {}
+
+    double rentalCharge(int days) const override {
+        return dailyRate * days + 50 * days;
+    }
+
+    string type() const override {
+        return "TwoWheeler";
+    }
+};
+
+class Car : public MotorVehicle {
+protected:
+    int seatingCapacity;
+
+public:
+    Car(string r, double rate, double energy,
+        string date, int seats)
+        : MotorVehicle(r, rate, energy, date),
+          seatingCapacity(seats) {}
+
+    double rentalCharge(int days) const override {
+        return dailyRate * days + 100 * days;
+    }
+
+    string type() const override {
+        return "Car";
+    }
+};
+
+class ElectricVehicle : public MotorVehicle {
+protected:
+    double batteryCapacity;
+    double costPerKWh;
+
+public:
+    ElectricVehicle(string r, double rate, double energy,
+                    string date, double battery, double cost)
+        : MotorVehicle(r, rate, energy, date),
+          batteryCapacity(battery),
+          costPerKWh(cost) {}
+};
+
+class ElectricCar : public ElectricVehicle {
+private:
+    int seatingCapacity;
+
+public:
+    ElectricCar(string r, double rate, double energy,
+                string date, double battery,
+                double cost, int seats)
+        : ElectricVehicle(r, rate, energy, date,
+                          battery, cost),
+          seatingCapacity(seats) {}
+
+    double rentalCharge(int days) const override {
+        return dailyRate * days +
+               batteryCapacity * costPerKWh;
+    }
+
+    string type() const override {
+        return "ElectricCar";
+    }
+};
+
+class ElectricBus : public ElectricVehicle {
+private:
+    int seatingCapacity;
+
+public:
+    ElectricBus(string r, double rate, double energy,
+                string date, double battery,
+                double cost, int seats)
+        : ElectricVehicle(r, rate, energy, date,
+                          battery, cost),
+          seatingCapacity(seats) {}
+
+    double rentalCharge(int days) const override {
+        return dailyRate * days +
+               batteryCapacity * costPerKWh;
+    }
+
+    string type() const override {
+        return "ElectricBus";
+    }
+};
+
+int main() {
+    Bicycle b("BIKE101", 100);
+    TwoWheeler t("TN01", 300, 80, "2026-12-20");
+    Car c("TN02", 1000, 70, "2026-12-25", 5);
+
+    ElectricCar e("EV01", 1500, 90,
+                  "2026-12-30", 60, 8, 5);
+
+    ElectricBus bus("BUS01", 3000, 85,
+                    "2027-01-10", 120, 8, 40);
+
+    Vehicle* fleet[] = {&b, &t, &c, &e, &bus};
+
+    int days = 2;
+
+    cout << "VEHICLE RENTAL SYSTEM\n\n";
+
+    for (Vehicle* v : fleet) {
+        v->display();
+
+        if (v->rent()) {
+            cout << "Rental Charge: Rs."
+                 << v->rentalCharge(days) << endl;
+
+            cout << "Late Return Charge: Rs."
+                 << v->returnVehicle(1) << endl;
+        }
+
+        cout << "-------------------" << endl;
+    }
+
+    return 0;
+}
