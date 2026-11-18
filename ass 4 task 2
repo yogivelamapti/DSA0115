@@ -1,0 +1,115 @@
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Person {
+protected:
+    string name;
+    int id;
+    string phone;
+
+public:
+    Person(string n, int i, string p)
+        : name(n), id(i), phone(p) {}
+
+    void displayPerson() const {
+        cout << "Name: " << name << endl;
+        cout << "ID: " << id << endl;
+        cout << "Phone: " << phone << endl;
+    }
+
+    virtual ~Person() = default;
+};
+
+class Student : virtual public Person {
+protected:
+    string programme;
+    double cgpa;
+
+public:
+    Student(string n, int i, string p, string pr, double c)
+        : Person(n, i, p), programme(pr), cgpa(c) {}
+};
+
+class Staff : virtual public Person {
+protected:
+    string department;
+    double salary;
+
+public:
+    Staff(string n, int i, string p, string d, double s)
+        : Person(n, i, p), department(d), salary(s) {}
+};
+
+class TeachingAssistant : public Student, public Staff {
+public:
+    TeachingAssistant(string n, int i, string p,
+                      string pr, double c, string d, double s)
+        : Person(n, i, p),
+          Student(n, i, p, pr, c),
+          Staff(n, i, p, d, s) {}
+
+    void display() const {
+        displayPerson();
+        cout << "Programme: " << programme << endl;
+        cout << "CGPA: " << cgpa << endl;
+        cout << "Department: " << department << endl;
+        cout << "Salary: " << salary << endl;
+    }
+};
+
+class ResearchScholar : public Student {
+private:
+    double fellowship;
+
+public:
+    ResearchScholar(string n, int i, string p,
+                    string pr, double c, double f)
+        : Person(n, i, p),
+          Student(n, i, p, pr, c),
+          fellowship(f) {}
+
+    void display() const {
+        displayPerson();
+        cout << "Programme: " << programme << endl;
+        cout << "CGPA: " << cgpa << endl;
+        cout << "Fellowship: " << fellowship << endl;
+    }
+};
+
+int main() {
+    TeachingAssistant ta("Arun", 101, "9876543210",
+                         "CSE", 8.5, "Computer Science", 25000);
+
+    ResearchScholar rs("Kumar", 102, "9876501234",
+                       "PhD", 9.0, 30000);
+
+    cout << "Teaching Assistant Details" << endl;
+    ta.display();
+
+    cout << "\nResearch Scholar Details" << endl;
+    rs.display();
+
+    return 0;
+}
+
+output:
+Teaching Assistant Details
+Name: Arun
+ID: 101
+Phone: 9876543210
+Programme: CSE
+CGPA: 8.5
+Department: Computer Science
+Salary: 25000
+
+Research Scholar Details
+Name: Kumar
+ID: 102
+Phone: 9876501234
+Programme: PhD
+CGPA: 9
+Fellowship: 30000
+
+
