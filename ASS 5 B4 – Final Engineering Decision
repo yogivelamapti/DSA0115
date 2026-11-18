@@ -1,0 +1,197 @@
+#include <iostream>
+#include <vector>
+#include <memory>
+#include <string>
+#include <stdexcept>
+using namespace std;
+
+class BillingError : public runtime_error {
+public:
+    using runtime_error::runtime_error;
+};
+
+class Bill {
+protected:
+    string patient;
+
+public:
+    Bill(string p) : patient(p) {}
+
+    virtual double total() const = 0;
+    virtual string type() const = 0;
+
+    virtual ~Bill() = default;
+};
+
+class OutPatient : public Bill {
+    double consultation, tests;
+
+public:
+    OutPatient(string p, double c, double t)
+        : Bill(p), consultation(c), tests(t) {}
+
+    double total() const override {
+        return consultation + tests;
+    }
+
+    string type() const override {
+        return "Out Patient";
+    }
+};
+
+class InPatient : public Bill {
+    int days;
+    double rate, surgery;
+
+public:
+    InPatient(string p, int d, double r, double s)
+        : Bill(p), days(d), rate(r), surgery(s) {}
+
+    double total() const override {
+        return days * rate + surgery;
+    }
+
+    string type() const override {
+        return "In Patient";
+    }
+};
+
+// New bill type 1
+class DayCareBill : public Bill {
+    double packagePrice;
+
+public:
+    DayCareBill(string p, double price)
+        : Bill(p), packagePrice(price) {}
+
+    double total() const override {
+        return packagePrice;
+    }
+
+    string type() const override {
+        return "Day Care";
+    }
+};
+
+// New bill type 2
+class EmergencyBill : public Bill {
+    double baseCharge, hourlyCharge;
+    int hours;
+
+public:
+    EmergencyBill(string p, double base, double hourly, int h)
+        : Bill(p), baseCharge(base),
+          hourlyCharge(hourly), hours(h) {}
+
+    double total() const override {
+        return baseCharge + hourlyCharge * hours;
+    }
+
+    string type() const override {
+        return "Emergency";
+    }
+};
+
+class Payer {
+public:
+    virtual double amountCovered(const Bill& bill) const = 0;
+    virtual ~Payer() = default;
+};
+
+class SelfPay : public Payer {
+public:
+    double amountCovered(const Bill& bill) const override {
+        return bill.total();
+    }
+};
+
+class Insurance : public Payer {
+    double coverLimit;
+    double coPaymentPercent;
+
+public:
+    Insurance(double limit, double percent)
+        : coverLimit(limit), coPaymentPercent(percent) {}
+
+    double amountCovered(const Bill& bill) const override {
+        double amount = bill.total();
+
+        if (amount > coverLimit) {
+            throw BillingError("Insurance cover exceeded");
+        }
+
+        return amount * (1.0 - coPaymentPercent / 100.0);
+    }
+};
+
+class GovernmentScheme : public Payer {
+public:
+    double amountCovered(const Bill& bill) const override {
+        return bill.total() * 0.80;
+    }
+};
+
+// New payer
+class CorporateTieUp : public Payer {
+    double discountPercent;
+
+public:
+    CorporateTieUp(double discount)
+        : discountPercent(discount) {}
+
+    double amountCovered(const Bill& bill) const override {
+        return bill.total() *
+               (1.0 - discountPercent / 100.0);
+    }
+};
+
+int main() {
+    vector<unique_ptr<Bill>> bills;
+
+    bills.push_back(
+        make_unique<OutPatient>("Ravi", 500, 1200)
+    );
+
+    bills.push_back(
+        make_unique<InPatient>("Meena", 3, 2500, 40000)
+    );
+
+    bills.push_back(
+        make_unique<DayCareBill>("Arun", 15000)
+    );
+
+    bills.push_back(
+        make_unique<EmergencyBill>("Priya", 2000, 500, 3)
+    );
+
+    SelfPay self;
+    Insurance insurance(60000, 10);
+    GovernmentScheme government;
+    CorporateTieUp corporate(15);
+
+    for (const auto& bill : bills) {
+        cout << "\nBill Type: " << bill->type();
+        cout << "\nTotal Bill: " << bill->total();
+
+        try {
+            cout << "\nSelf Pay: "
+                 << self.amountCovered(*bill);
+
+            cout << "\nInsurance: "
+                 << insurance.amountCovered(*bill);
+
+            cout << "\nGovernment Scheme: "
+                 << government.amountCovered(*bill);
+
+            cout << "\nCorporate Tie-Up: "
+                 << corporate.amountCovered(*bill);
+        }
+        catch (const exception& e) {
+            cout << "\nClaim Error: " << e.what();
+        }
+
+        cout << "\n";
+    }
+
+    return 0;
+}
