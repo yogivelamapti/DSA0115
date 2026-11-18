@@ -1,0 +1,183 @@
+#include <iostream>
+#include <vector>
+#include <memory>
+#include <chrono>
+#include <stdexcept>
+using namespace std;
+using namespace chrono;
+
+volatile double resultSink = 0;
+
+class Bill {
+public:
+    virtual double total() const = 0;
+    virtual ~Bill() = default;
+};
+
+class OPBill : public Bill {
+    double consultation, tests;
+
+public:
+    OPBill(double c, double t) : consultation(c), tests(t) {}
+
+    double total() const override {
+        return consultation + tests;
+    }
+};
+
+class IPBill : public Bill {
+    double room, surgery;
+
+public:
+    IPBill(double r, double s) : room(r), surgery(s) {}
+
+    double total() const override {
+        return room + surgery;
+    }
+};
+
+struct SimpleBill {
+    int type;
+    double a, b;
+};
+
+double switchTotal(const SimpleBill& bill) {
+    switch (bill.type) {
+        case 1: return bill.a + bill.b;
+        case 2: return bill.a + bill.b;
+        default: return 0;
+    }
+}
+
+void benchmark(int n) {
+    vector<unique_ptr<Bill>> virtualBills;
+    vector<SimpleBill> switchBills;
+
+    virtualBills.reserve(n);
+    switchBills.reserve(n);
+
+    for (int i = 0; i < n; i++) {
+        if (i % 2 == 0) {
+            virtualBills.push_back(
+                make_unique<OPBill>(500, 1200)
+            );
+            switchBills.push_back({1, 500, 1200});
+        } else {
+            virtualBills.push_back(
+                make_unique<IPBill>(7500, 40000)
+            );
+            switchBills.push_back({2, 7500, 40000});
+        }
+    }
+
+    double sum1 = 0;
+    auto start1 = high_resolution_clock::now();
+
+    for (const auto& b : virtualBills) {
+        sum1 += b->total();
+    }
+
+    auto end1 = high_resolution_clock::now();
+
+    double sum2 = 0;
+    auto start2 = high_resolution_clock::now();
+
+    for (const auto& b : switchBills) {
+        sum2 += switchTotal(b);
+    }
+
+    auto end2 = high_resolution_clock::now();
+
+    resultSink = sum1 + sum2;
+
+    cout << "\nBills: " << n << '\n';
+    cout << "Virtual total: " << sum1 << '\n';
+    cout << "Switch total:  " << sum2 << '\n';
+
+    cout << "Virtual time: "
+         << duration_cast<milliseconds>(end1 - start1).count()
+         << " ms\n";
+
+    cout << "Switch time:  "
+         << duration_cast<milliseconds>(end2 - start2).count()
+         << " ms\n";
+}
+
+bool validateReturn(double amount) {
+    return amount >= 0 && amount <= 1000000;
+}
+
+bool validateException(double amount) {
+    if (amount < 0) {
+        throw invalid_argument("negative amount");
+    }
+
+    if (amount > 1000000) {
+        throw out_of_range("amount too large");
+    }
+
+    return true;
+}
+
+void exceptionBenchmark(int invalidPercent) {
+    const int n = 1000000;
+    vector<double> amounts(n, 500);
+
+    int invalidCount = n * invalidPercent / 100;
+
+    for (int i = 0; i < invalidCount; i++) {
+        amounts[i] = -10;
+    }
+
+    int valid1 = 0;
+    auto start1 = high_resolution_clock::now();
+
+    for (double amount : amounts) {
+        if (validateReturn(amount)) {
+            valid1++;
+        }
+    }
+
+    auto end1 = high_resolution_clock::now();
+
+    int valid2 = 0;
+    auto start2 = high_resolution_clock::now();
+
+    for (double amount : amounts) {
+        try {
+            if (validateException(amount)) {
+                valid2++;
+            }
+        }
+        catch (const exception&) {
+            // Invalid claim handled here
+        }
+    }
+
+    auto end2 = high_resolution_clock::now();
+
+    cout << "\nInvalid claims: " << invalidPercent << "%\n";
+
+    cout << "Return-code time: "
+         << duration_cast<milliseconds>(end1 - start1).count()
+         << " ms\n";
+
+    cout << "Exception time:   "
+         << duration_cast<milliseconds>(end2 - start2).count()
+         << " ms\n";
+
+    cout << "Valid claims: " << valid1
+         << " and " << valid2 << '\n';
+}
+
+int main() {
+    benchmark(1000);
+    benchmark(1000000);
+    benchmark(10000000);
+
+    exceptionBenchmark(0);
+    exceptionBenchmark(1);
+    exceptionBenchmark(50);
+
+    return 0;
+}
