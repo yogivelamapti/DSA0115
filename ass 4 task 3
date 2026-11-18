@@ -1,0 +1,144 @@
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Person {
+protected:
+    string name;
+    int age;
+
+public:
+    Person(string n, int a) : name(n), age(a) {
+        cout << "Person constructed" << endl;
+    }
+
+    ~Person() {
+        cout << "Person destroyed" << endl;
+    }
+};
+
+class Student : virtual public Person {
+public:
+    Student(string n, int a) : Person(n, a) {
+        cout << "Student constructed" << endl;
+    }
+
+    ~Student() {
+        cout << "Student destroyed" << endl;
+    }
+};
+
+class Staff : virtual public Person {
+public:
+    Staff(string n, int a) : Person(n, a) {
+        cout << "Staff constructed" << endl;
+    }
+
+    ~Staff() {
+        cout << "Staff destroyed" << endl;
+    }
+};
+
+class TeachingAssistant : public Student, public Staff {
+public:
+    TeachingAssistant(string n, int a)
+        : Person(n, a), Student(n, a), Staff(n, a) {
+        cout << "TA constructed" << endl;
+    }
+
+    ~TeachingAssistant() {
+        cout << "TA destroyed" << endl;
+    }
+};
+
+class Address {
+    string city;
+    int pin;
+
+public:
+    Address(const string& c, int p) : city(c), pin(p) {}
+
+    string str() const {
+        return city + "-" + to_string(pin);
+    }
+};
+
+class StudentRecord : public Person {
+    long long regNo;
+    Address home;
+
+public:
+    StudentRecord(string n, int a, long long r,
+                  string city, int pin)
+        : Person(n, a), regNo(r), home(city, pin) {}
+
+    void print() const {
+        cout << regNo << " " << name << " (" << age
+             << ") " << home.str() << endl;
+    }
+};
+
+class Vehicle {
+public:
+    Vehicle() {
+        cout << "Vehicle ";
+    }
+
+    virtual ~Vehicle() {
+        cout << "~Vehicle ";
+    }
+};
+
+class Engine {
+public:
+    Engine() {
+        cout << "Engine ";
+    }
+
+    ~Engine() {
+        cout << "~Engine ";
+    }
+};
+
+class Car : public Vehicle {
+    Engine engine;
+
+public:
+    Car() {
+        cout << "Car ";
+    }
+
+    ~Car() {
+        cout << "~Car ";
+    }
+};
+
+int main() {
+    cout << "Student Object" << endl;
+    {
+        Student s("Arun", 20);
+    }
+
+    cout << "\nStaff Object" << endl;
+    {
+        Staff s("Kumar", 25);
+    }
+
+    cout << "\nTeachingAssistant Object" << endl;
+    {
+        TeachingAssistant ta("Ravi", 22);
+    }
+
+    cout << "\nStudent Record" << endl;
+    StudentRecord record("Kavya", 19, 192311001,
+                         "Salem", 636001);
+    record.print();
+
+    cout << "\nVehicle Constructor Order" << endl;
+    {
+        Car c;
+    }
+
+    return 0;
+}
